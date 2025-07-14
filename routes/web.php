@@ -23,7 +23,7 @@ Route::middleware(['auth'])->name('students.')->group(function () {
     Route::get('/students', [App\Http\Controllers\StudentController::class, 'index'])->name('index');
     Route::post('/students', [App\Http\Controllers\StudentController::class, 'addStudent'])->name('store');
     Route::get('/students/{student}', [App\Http\Controllers\StudentController::class, 'viewStudent'])->name('view');
-    Route::patch('/students/{student}', [App\Http\Controllers\StudentController::class, 'updateStudent'])->name('update');
+    Route::put('/students/{student}', [App\Http\Controllers\StudentController::class, 'updateStudent'])->name('update');
     Route::delete('/students/{student}', [App\Http\Controllers\StudentController::class, 'deleteStudent'])->name('delete');
 });
 

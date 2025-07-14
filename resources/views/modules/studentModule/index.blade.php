@@ -10,6 +10,12 @@
 
     @push('scripts')
         <script>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
             $(document).on('click', '.view-student-btn', function(e) {
                 e.preventDefault();
                 let url = $(this).data('url');
@@ -90,7 +96,89 @@
                 });
             });
 
-            $(document).on('click', '.')
+            $(document).on('click', '.edit-student-btn', function(e) {
+                e.preventDefault();
+                let url = $(this).data('url');
+                console.log(url);
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    beforeSend: function() {
+                        // Show loading spinner
+                        $('#editStudentModal').modal('show');
+
+                        $('#edit-student-loading').removeClass('d-none');
+                        $('#edit-student-form-body').addClass('d-none');
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('#edit_name').val(response.name);
+                        $('#edit_email').val(response.email);
+                        $('#edit_password').val(response.password);
+                        $('#edit_ic_no').val(response.ic_no);
+                        $('#edit_matric_no').val(response.matric_no);
+                        $('#edit_course_id').val(response.course_id);
+                        $('#edit_gender').val(response.gender);
+                        $('#edit_address').val(response.address);
+
+                        let updateUrl = `/students/${response.id}`;
+                        $('#editStudentModal form').attr('action', updateUrl);
+
+                        $('#edit-student-loading').addClass('d-none');
+                        $('#edit-student-form-body').removeClass('d-none');
+                    },
+                    error: function(xhr) {
+                        $('#editStudentModal .modal-body').html(`
+                            <div class="text-center py-4">
+                                <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 text-danger">Error Loading Data</h5>
+                                <p class="text-muted">Failed to fetch student details. Please try again.</p>
+                            </div>
+                        `);
+                    }
+                })
+            })
+
+            $(document).on('click', '.delete-student-btn', function(e) {
+                e.preventDefault();
+                let url = $(this).data('url');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This student will be deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // User confirmed deletion
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            success: function(response) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Student has been deleted.',
+                                    'success'
+                                );
+
+                                location.reload();
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error!',
+                                    'Failed to delete student.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            })
         </script>
     @endpush
 
@@ -98,13 +186,23 @@
 
 @if (session('success'))
     <script>
-        swal("Success!", "{{ session('success') }}", "success");
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
     </script>
 @endif
 
 @if (session('error'))
     <script>
-        swal("Error!", "{{ session('error') }}", "error");
+        Swal.fire({
+            title: 'Error!',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     </script>
 @endif
 
@@ -212,42 +310,6 @@
                         <div class="col-md-6">
                             <div class="card student-card">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-3 d-flex justify-content-center">
-                                            <div class="student-avatar">
-                                                JD
-                                            </div>
-                                        </div>
-                                        <div class="col-9">
-                                            <div class="info-item">
-                                                <div class="info-label">
-                                                    <i class="fas fa-id-card me-2"></i>Matric No
-                                                </div>
-                                                <div class="info-value">2023001234</div>
-                                            </div>
-                                            <div class="info-item">
-                                                <div class="info-label">
-                                                    <i class="fas fa-user me-2"></i>Name
-                                                </div>
-                                                <div class="info-value">John Doe</div>
-                                            </div>
-                                            <div class="info-item">
-                                                <div class="info-label">
-                                                    <i class="fas fa-envelope me-2"></i>Email
-                                                </div>
-                                                <div class="info-value">john.doe@example.com</div>
-                                            </div>
-                                            <div class="info-item">
-                                                <div class="info-label">
-                                                    <i class="fas fa-graduation-cap me-2"></i>Course
-                                                </div>
-                                                <div class="info-value">
-                                                    Computer Science (CS101)
-                                                    <span class="badge badge-custom ms-2">Active</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -262,43 +324,98 @@
 <div class="col-lg-4 col-md-6">
     <div class="modal fade" id="editStudentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalStudentTitle">Edit Student Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" class="form-control" placeholder="Enter Name" />
+            <form action="{{ route('students.update', 0) }}" method="post">
+                @method('PUT')
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalStudentTitle">Edit Student</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="edit-student-loading" class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading student details...</p>
+                        </div>
+                        <div id="edit-student-form-body" class="d-none">
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label for="edit_name" class="form-label">Name</label>
+                                    <input type="text" id="edit_name" name="name" class="form-control"
+                                        placeholder="Enter Name" />
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col mb-0">
+                                    <label for="edit_email" class="form-label">Email</label>
+                                    <input type="text" id="edit_email" name="email" class="form-control"
+                                        placeholder="xxxx@xxx.xx" />
+                                </div>
+                                <div class="form-password-toggle col mb-3">
+                                    <label class="form-label" for="edit_password">Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" class="form-control" id="edit_password"
+                                            name="password"
+                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                            aria-describedby="basic-default-password" />
+                                        <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                                class="bx bx-hide"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col mb-0">
+                                    <label for="edit_ic_no" class="form-label">IC No</label>
+                                    <input type="text" id="edit_ic_no" name="ic_no" class="form-control"
+                                        placeholder="02xxxxxxxxxx" />
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="edit_matric_no" class="form-label">Matric no</label>
+                                    <input type="text" id="edit_matric_no" name="matric_no" class="form-control"
+                                        placeholder="S1XXXXX" />
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col mb-0">
+                                    <label for="edit_course_id" class="form-label">Course</label>
+                                    <select id="edit_course_id" name="course_id" class="form-select">
+                                        <option value="" disabled>Select Course</option>
+                                        @foreach ($course as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->course_code }} - {{ $item->course_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col mb-0">
+                                    <label for="edit_gender" class="form-label">Gender</label>
+                                    <select name="gender" id="edit_gender" class="form-select">
+                                        <option value="" disabled>Select Gender</option>
+                                        <option value="1">Male</option>
+                                        <option value="0">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col mb-3">
+                                    <label for="edit_address" class="form-label">Address</label>
+                                    <textarea id="edit_address" name="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4"
+                                        cols="50"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row g-2">
-                        <div class="col mb-0">
-                            <label for="ic_no" class="form-label">IC No</label>
-                            <input type="text" id="ic_no" class="form-control"
-                                placeholder="xxxxxx-xx-xxxx" />
-                        </div>
-                        <div class="col mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" id="email" class="form-control" placeholder="xxxx@xxx.xx" />
-                        </div>
-                    </div>
-                    <div class="row ">
-                        <div class="col mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea id="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4" cols="50"></textarea>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="bx bx-edit"></i>Student</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                    <button type="button" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

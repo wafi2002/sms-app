@@ -53,7 +53,7 @@ class DynamicTable extends Component
                 'paramKey' => 'student',
                 'modal' => true,
                 'target' => '#editStudentModal',
-                'jsTrigger' => 'view-student-btn',
+                'jsTrigger' => 'edit-student-btn',
             ],
             [
                 'label' => 'Delete',
@@ -61,6 +61,7 @@ class DynamicTable extends Component
                 'route' => 'students.delete',
                 'paramKey' => 'student',
                 'modal' => false,
+                'jsTrigger' => 'delete-student-btn',
             ],
         ];
     }

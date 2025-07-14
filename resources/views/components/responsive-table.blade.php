@@ -52,10 +52,12 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         @foreach ($actions as $action)
-                                            <a class="dropdown-item @if ($action['label'] === 'View') view-student-btn @endif"
+                                            <a class="dropdown-item {{ $action['jsTrigger'] ?? '' }}"
                                                 href="{{ route($action['route'], [$action['paramKey'] ?? 'id' => $row['id']]) }}"
                                                 @if (!empty($action['modal']) && $action['modal'] === true) data-bs-toggle="modal"
-                                                data-bs-target="{{ $action['target'] ?? '' }}" data-id="{{ $row['id'] }}" data-url="{{ route($action['route'], [$action['paramKey'] ?? 'id' => $row['id']]) }}" @endif>
+                                                data-bs-target="{{ $action['target'] ?? '' }}" @endif
+                                                data-id="{{ $row['id'] }}"
+                                                data-url="{{ route($action['route'], [$action['paramKey'] ?? 'id' => $row['id']]) }}">
                                                 <i class="{{ $action['icon'] ?? 'bx bx-cog' }} me-1"></i>
                                                 {{ $action['label'] }}
                                             </a>
