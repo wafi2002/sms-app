@@ -1,0 +1,304 @@
+@section('title', __('All Student'))
+
+<x-layouts.app>
+
+    @push('styles')
+        @vite(['resources/css/student.css'])
+    @endpush
+
+    @livewire('dynamic-table')
+
+    @push('scripts')
+        <script>
+            $(document).on('click', '.view-student-btn', function(e) {
+                e.preventDefault();
+                let url = $(this).data('url');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    beforeSend: function() {
+                        // Show loading spinner
+                        $('#viewStudentModal .modal-body').html(`
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading student details...</p>
+                            </div>
+                        `);
+                        $('#viewStudentModal').modal('show');
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        // Get initials for avatar
+                        let initials = response.name.split(' ').map(word => word.charAt(0)).join('')
+                            .toUpperCase();
+
+                        // Card Layout HTML
+                        let html = `
+                            <div class="row">
+                                <div class="col-3 d-flex justify-content-center">
+                                    <div class="student-avatar">
+                                        ${initials}
+                                    </div>
+                                </div>
+                                <div class="col-9">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-id-card me-2"></i>Matric No
+                                        </div>
+                                        <div class="info-value">${response.matric_no}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-user me-2"></i>Name
+                                        </div>
+                                        <div class="info-value">${response.name}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-envelope me-2"></i>Email
+                                        </div>
+                                        <div class="info-value">${response.email}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-graduation-cap me-2"></i>Course
+                                        </div>
+                                        <div class="info-value">
+                                            ${response.course_name} (${response.course_code})
+                                            <span class="badge badge-custom ms-2">Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        $('#viewStudentModal .modal-body').html(html);
+                    },
+                    error: function(xhr) {
+                        $('#viewStudentModal .modal-body').html(`
+                            <div class="text-center py-4">
+                                <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 text-danger">Error Loading Data</h5>
+                                <p class="text-muted">Failed to fetch student details. Please try again.</p>
+                            </div>
+                        `);
+                    }
+                });
+            });
+
+            $(document).on('click', '.')
+        </script>
+    @endpush
+
+</x-layouts.app>
+
+@if (session('success'))
+    <script>
+        swal("Success!", "{{ session('success') }}", "success");
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        swal("Error!", "{{ session('error') }}", "error");
+    </script>
+@endif
+
+<!-- Add Student Modal -->
+<div class="col-lg-4 col-md-6">
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form action="{{ route('students.store') }}" method="post">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalStudentTitle">Add Student</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" id="name" name="name" class="form-control"
+                                    placeholder="Enter Name" />
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col mb-0">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text" id="email" name="email" class="form-control"
+                                    placeholder="xxxx@xxx.xx" />
+                            </div>
+                            <div class="form-password-toggle col mb-3">
+                                <label class="form-label" for="basic-default-password32">Password</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" class="form-control" id="basic-default-password32"
+                                        name="password"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                                        aria-describedby="basic-default-password" />
+                                    <span class="input-group-text cursor-pointer" id="basic-default-password"><i
+                                            class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col mb-0">
+                                <label for="ic_no" class="form-label">IC No</label>
+                                <input type="text" id="ic_no" name="ic_no" class="form-control"
+                                    placeholder="02xxxxxxxxxx" />
+                            </div>
+                            <div class="col mb-3">
+                                <label for="matric_no" class="form-label">Matric no</label>
+                                <input type="text" id="matric_no" name="matric_no" class="form-control"
+                                    placeholder="S1XXXXX" />
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col mb-0">
+                                <label for="course_id" class="form-label">Course</label>
+                                <select id="course_id" name="course_id" class="form-select">
+                                    <option value="" disabled>Select Course</option>
+                                    @foreach ($course as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->course_code }} - {{ $item->course_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col mb-0">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select name="gender" id="gender" class="form-select">
+                                    <option value="" disabled>Select Gender</option>
+                                    <option value="1">Male</option>
+                                    <option value="0">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea id="address" name="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4"
+                                    cols="50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Student Modal -->
+<div class="col-lg-4 col-md-6">
+    <div class="modal fade" id="viewStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalStudentTitle">Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card student-card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <div class="student-avatar">
+                                                JD
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <div class="info-item">
+                                                <div class="info-label">
+                                                    <i class="fas fa-id-card me-2"></i>Matric No
+                                                </div>
+                                                <div class="info-value">2023001234</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">
+                                                    <i class="fas fa-user me-2"></i>Name
+                                                </div>
+                                                <div class="info-value">John Doe</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">
+                                                    <i class="fas fa-envelope me-2"></i>Email
+                                                </div>
+                                                <div class="info-value">john.doe@example.com</div>
+                                            </div>
+                                            <div class="info-item">
+                                                <div class="info-label">
+                                                    <i class="fas fa-graduation-cap me-2"></i>Course
+                                                </div>
+                                                <div class="info-value">
+                                                    Computer Science (CS101)
+                                                    <span class="badge badge-custom ms-2">Active</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div class="col-lg-4 col-md-6">
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalStudentTitle">Edit Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" id="name" class="form-control" placeholder="Enter Name" />
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col mb-0">
+                            <label for="ic_no" class="form-label">IC No</label>
+                            <input type="text" id="ic_no" class="form-control"
+                                placeholder="xxxxxx-xx-xxxx" />
+                        </div>
+                        <div class="col mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" id="email" class="form-control" placeholder="xxxx@xxx.xx" />
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea id="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4" cols="50"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

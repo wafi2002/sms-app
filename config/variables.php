@@ -1,0 +1,31 @@
+<?php
+// Variables
+return [
+    "creatorName" => "ThemeSelection",
+    "creatorUrl" => "https://themeselection.com",
+    "Name" => "Student Management System",
+    "Suffix" => "Management Platform",
+    "Acronym" => "SMS",
+    "Version" => "1.0.0",
+    "templateFree" => true,
+    "Description" => "A mini Laravel project designed to help manage students, courses, and exam marks efficiently. It includes core modules like Student, Course, Exam Marks, and Reports. ",
+    "Keyword" => "Laravel, Student Management, CRUD, Report Export, Exam",
+    "licenseUrl" => "https://themeselection.com/license/",
+    "livePreview" => "https://demos.themeselection.com/sneat-bootstrap-html-laravel-admin-template-free/demo/",
+    "productPage" => "https://themeselection.com/item/sneat-free-bootstrap-laravel-livewire-starter-kit/",
+    "ogTitle" => "Student Management System by Danial Wafi",
+    "ogType" => "product",
+    "ogImage" => "https://github-production-user-asset-6210df.s3.amazonaws.com/61959920/427962312-a4f2c59c-92a0-4624-a0f0-d53ee0acf7d9.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250328%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250328T104541Z&X-Amz-Expires=300&X-Amz-Signature=88f19338f62219496631c44f4da216a3f2da10169fb75377cdc9146dc1722352&X-Amz-SignedHeaders=host",
+    "support" => "https://github.com/themeselection/sneat-bootstrap-laravel-livewire-starter-kit/issues",
+    "moreThemes" => "https://themeselection.com/",
+    "documentation" => "https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation",
+    "repository" => "https://github.com/themeselection/sneat-bootstrap-laravel-livewire-starter-kit",
+    "gitRepo" => "https://github.com/themeselection/sneat-bootstrap-laravel-livewire-starter-kit.git",
+    "gitRepoAccess" => "https://tools.themeselection.com/github/github-access",
+    "githubFreeUrl" => "https://github.com/themeselection",
+    "facebookUrl" => "https://www.facebook.com/ThemeSelections/",
+    "twitterUrl" => "https://x.com/Theme_Selection",
+    "githubUrl" => "https://github.com/themeselection",
+    "dribbbleUrl" => "https://dribbble.com/themeselection",
+    "instagramUrl" => "https://www.instagram.com/themeselection/"
+];
