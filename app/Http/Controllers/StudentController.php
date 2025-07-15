@@ -116,7 +116,7 @@ class StudentController extends Controller
                 $user->gender = $validated['gender'];
 
                 if (!empty($validated['password'])) {
-                    $user->password = \Hash::make($validated['password']);
+                    $user->password = Hash::make($validated['password']);
                 }
 
                 $user->save();

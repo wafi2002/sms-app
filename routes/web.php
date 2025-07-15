@@ -20,11 +20,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->name('students.')->group(function () {
-    Route::get('/students', [App\Http\Controllers\StudentController::class, 'index'])->name('index');
-    Route::post('/students', [App\Http\Controllers\StudentController::class, 'addStudent'])->name('store');
-    Route::get('/students/{student}', [App\Http\Controllers\StudentController::class, 'viewStudent'])->name('view');
-    Route::put('/students/{student}', [App\Http\Controllers\StudentController::class, 'updateStudent'])->name('update');
-    Route::delete('/students/{student}', [App\Http\Controllers\StudentController::class, 'deleteStudent'])->name('delete');
+    Route::get('students', [App\Http\Controllers\StudentController::class, 'index'])->name('index');
+    Route::post('students', [App\Http\Controllers\StudentController::class, 'addStudent'])->name('store');
+    Route::get('students/{student}', [App\Http\Controllers\StudentController::class, 'viewStudent'])->name('view');
+    Route::put('students/{student}', [App\Http\Controllers\StudentController::class, 'updateStudent'])->name('update');
+    Route::delete('students/{student}', [App\Http\Controllers\StudentController::class, 'deleteStudent'])->name('delete');
 });
 
 Route::middleware(['auth'])->name('course.')->group(function () {
@@ -34,6 +34,8 @@ Route::middleware(['auth'])->name('course.')->group(function () {
 Route::middleware(['auth'])->name('exams.')->group(function () {
     Route::view('exams/schedule', 'modules.examModule.schedule')->name('schedule');
     Route::view('exams/mark', 'modules.examModule.mark')->name('mark');
+    Route::put('exams/{student}', [App\Http\Controllers\ExamController::class, 'updateMark'])->name('update');
+    Route::delete('exams/{student}', [App\Http\Controllers\ExamController::class, 'deleteMark'])->name('delete');
 });
 
 Route::middleware(['auth'])->name('reports.')->group(function () {
