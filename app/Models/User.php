@@ -21,12 +21,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'ic_no',
-        'gender',
         'email',
         'password',
-        'address',
-        'role'
     ];
 
     /**
@@ -64,8 +60,4 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function student()
-    {
-        return $this->hasOne(Student::class);
-    }
 }

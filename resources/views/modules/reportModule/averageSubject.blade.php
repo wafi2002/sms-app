@@ -1,7 +1,6 @@
 @section('title', __('Subject Average'))
 
 <x-layouts.app>
-    <div>
-        <h1>Subject Average</h1>
-    </div>
+    <x-responsive-table :columns="$columns" :rows="$rows" :title="$title" :showAddButton="$showAddButton" :hasAction="$hasAction"
+        :showExportButton="$showExportButton" :exportActions="$exportActions" />
 </x-layouts.app>

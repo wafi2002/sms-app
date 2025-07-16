@@ -65,9 +65,21 @@
                                     </div>
                                     <div class="info-item">
                                         <div class="info-label">
+                                            <i class="fas fa-phone-alt me-2"></i>Phone No
+                                        </div>
+                                        <div class="info-value">${response.phone_no}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">
                                             <i class="fas fa-envelope me-2"></i>Email
                                         </div>
                                         <div class="info-value">${response.email}</div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Address
+                                        </div>
+                                        <div class="info-value">${response.address}</div>
                                     </div>
                                     <div class="info-item">
                                         <div class="info-label">
@@ -96,6 +108,41 @@
                 });
             });
 
+             $(document).on('click', '#submitAddStudentBtn', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to add a new student.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Add it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#addStudentModal form').submit();
+                    }
+                });
+            });
+
+            $(document).on('click', '#submitEditStudentBtn', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to update this student's details.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#editStudentModal form').submit();
+                    }
+                });
+            });
+
+
             $(document).on('click', '.edit-student-btn', function(e) {
                 e.preventDefault();
                 let url = $(this).data('url');
@@ -117,6 +164,7 @@
                         $('#edit_email').val(response.email);
                         $('#edit_password').val(response.password);
                         $('#edit_ic_no').val(response.ic_no);
+                        $('#edit_phone_no').val(response.phone_no);
                         $('#edit_matric_no').val(response.matric_no);
                         $('#edit_course_id').val(response.course_id);
                         $('#edit_gender').val(response.gender);
@@ -231,16 +279,10 @@
                                 <input type="text" id="email" name="email" class="form-control"
                                     placeholder="xxxx@xxx.xx" />
                             </div>
-                            <div class="form-password-toggle col mb-3">
-                                <label class="form-label" for="basic-default-password32">Password</label>
-                                <div class="input-group input-group-merge">
-                                    <input type="password" class="form-control" id="basic-default-password32"
-                                        name="password"
-                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                        aria-describedby="basic-default-password" />
-                                    <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                            class="bx bx-hide"></i></span>
-                                </div>
+                            <div class="col mb-0">
+                                <label for="phone_no" class="form-label">Phone No</label>
+                                <input type="text" id="phone_no" name="phone_no" class="form-control"
+                                    placeholder="012-xxxxxxxx" />
                             </div>
                         </div>
                         <div class="row g-2">
@@ -271,8 +313,8 @@
                                 <label for="gender" class="form-label">Gender</label>
                                 <select name="gender" id="gender" class="form-select">
                                     <option value="" disabled>Select Gender</option>
-                                    <option value="1">Male</option>
-                                    <option value="0">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
                                 </select>
                             </div>
                         </div>
@@ -288,7 +330,7 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <button type="submit" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
+                        <button type="submit" id="submitAddStudentBtn" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
                     </div>
                 </div>
             </form>
@@ -354,16 +396,10 @@
                                     <input type="text" id="edit_email" name="email" class="form-control"
                                         placeholder="xxxx@xxx.xx" />
                                 </div>
-                                <div class="form-password-toggle col mb-3">
-                                    <label class="form-label" for="edit_password">Password</label>
-                                    <div class="input-group input-group-merge">
-                                        <input type="password" class="form-control" id="edit_password"
-                                            name="password"
-                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                            aria-describedby="basic-default-password" />
-                                        <span class="input-group-text cursor-pointer" id="basic-default-password"><i
-                                                class="bx bx-hide"></i></span>
-                                    </div>
+                                <div class="col mb-0">
+                                    <label for="edit_phone_no" class="form-label">Phone No</label>
+                                    <input type="text" id="edit_phone_no" name="phone_no" class="form-control"
+                                        placeholder="012-xxxxxxxx" />
                                 </div>
                             </div>
                             <div class="row g-2">
@@ -394,8 +430,8 @@
                                     <label for="edit_gender" class="form-label">Gender</label>
                                     <select name="gender" id="edit_gender" class="form-select">
                                         <option value="" disabled>Select Gender</option>
-                                        <option value="1">Male</option>
-                                        <option value="0">Female</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
                                     </select>
                                 </div>
                             </div>
@@ -412,7 +448,8 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <button type="submit" class="btn btn-primary"><i class="bx bx-edit"></i>Student</button>
+                        <button type="submit" id="submitEditStudentBtn" class="btn btn-primary"><i
+                                class="bx bx-edit"></i>Student</button>
                     </div>
                 </div>
             </form>

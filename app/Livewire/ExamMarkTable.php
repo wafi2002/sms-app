@@ -21,7 +21,7 @@ class ExamMarkTable extends Component
     public $subjectOptions = [];
     protected $listeners = ['filter-changed' => 'onFilterChanged', 'refreshExamMarkTable' => '$refresh' ];
     public $filters = [];
-    
+
 
     #[On('filter-changed')]
     public function onFilterChanged($key, $value)
@@ -47,10 +47,10 @@ class ExamMarkTable extends Component
     }
     public function render()
     {
-        $results = Result::with(['student.student', 'subject.course'])
+        $results = Result::with(['student', 'subject.course'])
             ->whereNull('deleted_at')
             ->when(isset($this->filters['Courses']) && $this->filters['Courses'], function ($query) {
-                $query->whereHas('student.student', function ($q) {
+                $query->whereHas('student', function ($q) {
                     $q->where('course_id', $this->filters['Courses']);
                 });
             })
@@ -62,7 +62,7 @@ class ExamMarkTable extends Component
         $this->rows = $results->map(function ($result) {
             return [
                 'id' => $result->id ?? '-',
-                'matric_no' => $result->student->student->matric_no ?? '-',
+                'matric_no' => $result->student->matric_no ?? '-',
                 'name' => $result->student->name ?? '-',
                 'course' => $result->subject->course->course_code ?? '-',
                 'subject' => $result->subject->subject_name ?? '-',

@@ -18,12 +18,6 @@
         <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-md-auto">
-            <li class="nav-item lh-1 me-4">
-                <a class="github-button"
-                    href="https://github.com/themeselection/sneat-bootstrap-laravel-livewire-starter-kit"
-                    data-icon="octicon-star" data-size="large" data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
-            </li>
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <!-- Check if the user is authenticated -->
@@ -31,8 +25,8 @@
                     <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);"
                         data-bs-toggle="dropdown">
                         <div class="avatar avatar-online">
-                            <img src="{{ Auth::user()->profile_photo_url ?? asset('assets/img/avatars/1.png') }}" alt
-                                class="w-px-40 h-auto rounded-circle">
+                            <img src="{{ Auth::user()->profile_photo_url ?? asset('assets/image/avatars/muka.jpeg') }}" alt
+                                class="w-px-30 h-auto rounded-circle">
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -41,8 +35,8 @@
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
-                                            <img src="{{ Auth::user()->profile_photo_url ?? asset('assets/img/avatars/1.png') }}"
-                                                alt class="w-px-40 h-auto rounded-circle" />
+                                            <img src="{{ Auth::user()->profile_photo_url ?? asset('assets/image/avatars/muka.jpeg') }}"
+                                                alt class="w-px-30 h-auto rounded-circle" />
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
@@ -84,8 +78,8 @@
                     <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);"
                         data-bs-toggle="dropdown">
                         <div class="avatar avatar-online">
-                            <img src="{{ asset('assets/img/avatars/1.png') }}" alt
-                                class="w-px-40 h-auto rounded-circle" />
+                            <img src="{{ asset('assets/image/avatars/profile-image.png') }}" alt
+                                class="w-px-30 h-auto rounded-circle" />
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">

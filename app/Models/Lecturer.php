@@ -9,5 +9,5 @@ class Lecturer extends Model
 {
     use SoftDeletes;
 
-    
+    protected $fillable = ['name','lecturer_no','department','expertise','ic_no', 'gender', 'phone_no', 'email', 'address'];
 }

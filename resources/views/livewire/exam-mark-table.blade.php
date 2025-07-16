@@ -35,7 +35,7 @@
 
     <x-responsive-table :columns="$columns" :rows="$rows" :showAddButton="true"
         :showModal="true" title="Manage Student Marks" buttonLabel="Add" addButtonIcon="bx bx-file"
-        modalTarget="#addStudentMarks" />
+        modalTarget="#addStudentMarksModal" />
 </div>
 
 @push('scripts')

@@ -9,7 +9,7 @@ class Result extends Model
     protected $fillable = ['student_id', 'subject_id', 'marks', 'grade', 'lecturer_id'];
 
     public function student() {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     public function subject() {
@@ -17,6 +17,6 @@ class Result extends Model
     }
 
     public function lecturer() {
-        return $this->belongsTo(User::class, 'lecturer_id');
+        return $this->belongsTo(Lecturer::class, 'lecturer_id');
     }
 }

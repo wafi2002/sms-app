@@ -1,7 +1,7 @@
 <?php
 // Variables
 return [
-    "creatorName" => "ThemeSelection",
+    "creatorName" => "Danial Wafi",
     "creatorUrl" => "https://themeselection.com",
     "Name" => "Student Management System",
     "Suffix" => "Management Platform",

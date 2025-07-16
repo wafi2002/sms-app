@@ -9,12 +9,7 @@ class Student extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id','course_id','matric_no'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $fillable = ['course_id', 'name', 'matric_no', 'ic_no', 'gender', 'phone_no', 'email', 'address'];
 
     public function course()
     {

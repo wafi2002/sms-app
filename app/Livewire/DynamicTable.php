@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\User;
+use App\Models\Student;
 use App\Models\Course;
 use Livewire\Attributes\On;
 
@@ -32,6 +32,7 @@ class DynamicTable extends Component
         $this->columns = [
             'name' => 'Name',
             'ic_no' => 'IC No',
+            'phone_no' => 'Phone No',
             'matric_no' => 'Matric No',
             'email' => 'Email',
         ];
@@ -67,21 +68,18 @@ class DynamicTable extends Component
     }
     public function render()
     {
-        $students = User::where('role', 'student')
-            ->whereNull('deleted_at')
+        $students = Student::whereNull('deleted_at')
             ->when(isset($this->filters['Course']) && $this->filters['Course'], function ($query) {
-                $query->whereHas('student', function ($q) {
-                    $q->where('course_id', $this->filters['Course']);
-                });
+                $query->where('course_id', $this->filters['Course']);
             })
-            ->with('student')
             ->get();
 
         $this->rows = $students->map(function ($student) {
             return [
                 'id' => $student->id,
                 'name' => $student->name,
-                'matric_no' => $student->student->matric_no ?? '-',
+                'matric_no' => $student->matric_no ?? '-',
+                'phone_no' => $student->phone_no ?? '-',
                 'ic_no' => $student->ic_no,
                 'email' => $student->email,
             ];

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->string('exam_name',64)->nullable();
+            $table->string('exam_name',128)->nullable();
             $table->string('exam_code', 8)->nullable();
-            $table->string('exam_location', 64)->nullable();
+            $table->text('exam_location')->nullable();
             $table->integer('duration')->nullable()->comment('in minutes');
             $table->timestamps();
             $table->softDeletes();

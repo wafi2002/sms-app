@@ -28,31 +28,22 @@ class StudentController extends Controller
                 'ic_no' => 'required|string|max:20',
                 'matric_no' => 'required|string|max:20|unique:students,matric_no',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:8',
-                'address' => 'nullable|string|max:500',
-                'gender' => 'required|in:0,1',
+                'phone_no' => 'required|string|max:15',
+                'address' => 'required|string|max:500',
+                'gender' => 'required|in:male,female',
                 'course_id' => 'required|exists:courses,id',
             ]);
 
-            $validated['password'] = Hash::make($validated['password']);
-
-            DB::transaction(function () use ($validated) {
-                $user = User::create([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'ic_no' => $validated['ic_no'],
-                    'password' => $validated['password'],
-                    'address' => $validated['address'],
-                    'gender' => $validated['gender'],
-                    'role' => 'student'
-                ]);
-
-                Student::create([
-                    'user_id' => $user->id,
-                    'matric_no' => $validated['matric_no'],
-                    'course_id' => $validated['course_id'],
-                ]);
-            });
+            $student = Student::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'ic_no' => $validated['ic_no'],
+                'phone_no' => $validated['phone_no'],
+                'address' => $validated['address'],
+                'gender' => $validated['gender'],
+                'matric_no' => $validated['matric_no'],
+                'course_id' => $validated['course_id'],
+            ]);
 
             return redirect()->back()->with('success', 'New Student Successfully Added.');
         } catch (Exception $e) {
@@ -63,9 +54,9 @@ class StudentController extends Controller
 
     public function viewStudent($studentId)
     {
-        $student = Student::with(['user:id,name,email,ic_no,gender,password,address,created_at', 'course:id,course_name,course_code'])
-            ->where('user_id', $studentId)
-            ->select('id', 'user_id', 'course_id', 'matric_no')
+        $student = Student::with(['course:id,course_name,course_code'])
+            ->where('id', $studentId)
+            ->select('id', 'course_id', 'matric_no', 'name', 'ic_no', 'gender', 'phone_no', 'email', 'address')
             ->first();
 
         if (!$student) {
@@ -74,17 +65,18 @@ class StudentController extends Controller
 
         return response()->json([
             'id' => $student->id,
-            'name' => $student->user->name ?? '-',
-            'ic_no' => $student->user->ic_no ?? '-',
+            'name' => $student->name ?? '-',
+            'ic_no' => $student->ic_no ?? '-',
             'matric_no' => $student->matric_no ?? '-',
-            'email' => $student->user->email ?? '-',
-            'password' => $student->user->password ?? '-',
-            'gender' => $student->user->gender ?? '-',
-            'address' => $student->user->address ?? '-',
+            'phone_no' => $student->phone_no ?? '-',
+            'email' => $student->email ?? '-',
+            'password' => $student->password ?? '-',
+            'gender' => $student->gender ?? '-',
+            'address' => $student->address ?? '-',
             'course_id' => $student->course->id ?? '-',
             'course_name' => $student->course->course_name ?? '-',
             'course_code' => $student->course->course_code ?? '-',
-            'created_at' => $student->user->created_at ?? '-',
+            'created_at' => $student->created_at ?? '-',
         ]);
     }
 
@@ -95,37 +87,25 @@ class StudentController extends Controller
                 'name' => 'required|string|max:255',
                 'ic_no' => 'required|string|max:20',
                 'matric_no' => 'required|string|max:20|unique:students,matric_no,' . $studentId,
-                'email' => 'required|email|unique:users,email,' . $studentId . ',id',
-                'password' => 'required|string|min:8',
-                'address' => 'nullable|string|max:500',
-                'gender' => 'required|in:0,1',
+                'email' => 'required|email|unique:students,email,' . $studentId,
+                'phone_no' => 'required|string|max:15',
+                'address' => 'required|string|max:500',
+                'gender' => 'required|in:male,female',
                 'course_id' => 'required|exists:courses,id',
             ]);
 
-            $validated['password'] = Hash::make($validated['password']);
+            $student = Student::findOrFail($studentId);
 
-            DB::transaction(function () use ($validated, $studentId) {
-                $student = Student::findOrFail($studentId);
-                $user = $student->user;
+            $student->name = $validated['name'];
+            $student->email = $validated['email'];
+            $student->ic_no = $validated['ic_no'];
+            $student->phone_no = $validated['phone_no'];
+            $student->address = $validated['address'];
+            $student->gender = $validated['gender'];
+            $student->matric_no = $validated['matric_no'];
+            $student->course_id = $validated['course_id'];
 
-                // Update user
-                $user->name = $validated['name'];
-                $user->email = $validated['email'];
-                $user->ic_no = $validated['ic_no'];
-                $user->address = $validated['address'];
-                $user->gender = $validated['gender'];
-
-                if (!empty($validated['password'])) {
-                    $user->password = Hash::make($validated['password']);
-                }
-
-                $user->save();
-
-                // Update student
-                $student->matric_no = $validated['matric_no'];
-                $student->course_id = $validated['course_id'];
-                $student->save();
-            });
+            $student->save();
 
             return redirect()->back()->with('success', 'Updated Successfully.');
         } catch (Exception $e) {
