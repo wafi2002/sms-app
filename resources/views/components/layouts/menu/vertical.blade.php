@@ -1,7 +1,7 @@
 <!-- Menu -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="{{ url('/') }}" class="app-brand-link"><x-app-logo /></a>
+        <a href="{{ url('/') }}" class="app-brand-link"><x-vertical-logo /></a>
     </div>
 
     <div class="menu-inner-shadow"></div>
@@ -9,13 +9,13 @@
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
         <li class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}">
-            <a class="menu-link" href="{{ route('dashboard') }}" wire:navigate>{{ __('Dashboard') }}</a>
+            <a class="menu-link" href="{{ route('dashboard') }}" wire:navigate><i class="menu-icon tf-icons bx bx-home-circle"></i>{{ __('Dashboard') }}</a>
         </li>
 
         <!-- Students -->
-        <li class="menu-item {{ request()->is('students/*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('students.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <i class="menu-icon tf-icons bx bx-user"></i>
                 <div class="text-truncate">{{ __('Students') }}</div>
             </a>
             <ul class="menu-sub">
@@ -26,7 +26,7 @@
         </li>
 
         <!-- Course -->
-        <li class="menu-item {{ request()->is('course/*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('course.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-book"></i>
                 <div class="text-truncate">{{ __('Course') }}</div>
@@ -38,10 +38,10 @@
             </ul>
         </li>
 
-        <!-- Schedules -->
-        <li class="menu-item {{ request()->is('exams/*') ? 'active open' : '' }}">
+        <!-- Exams -->
+        <li class="menu-item {{ request()->routeIs('exams.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <i class="menu-icon tf-icons bx bx-edit"></i>
                 <div class="text-truncate">{{ __('Exams') }}</div>
             </a>
             <ul class="menu-sub">
@@ -55,9 +55,9 @@
         </li>
 
         <!-- Reports -->
-        <li class="menu-item {{ request()->is('reports/*') ? 'active open' : '' }}">
+        <li class="menu-item {{ request()->routeIs('reports.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cog"></i>
+                <i class="menu-icon tf-icons bx bx-bar-chart"></i>
                 <div class="text-truncate">{{ __('Reports') }}</div>
             </a>
             <ul class="menu-sub">

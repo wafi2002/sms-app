@@ -136,13 +136,4 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <button type="submit" class="btn btn-primary d-grid w-100">{{ __('Login') }}</button>
         </div>
     </form>
-
-    @if (Route::has('register'))
-        <p class="text-center">
-            <span>{{ __('New on our platform?') }}</span>
-            <a href="{{ route('register') }}" wire:navigate>
-                <span>{{ __('Create an account') }}</span>
-            </a>
-        </p>
-    @endif
 </div>

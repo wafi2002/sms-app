@@ -6,7 +6,7 @@
         @vite(['resources/css/student.css'])
     @endpush
 
-    @livewire('dynamic-table')
+    @livewire('student-table')
 
     @push('scripts')
         <script>
@@ -108,8 +108,70 @@
                 });
             });
 
-             $(document).on('click', '#submitAddStudentBtn', function(e) {
+            $(document).on('click', '#submitAddStudentBtn', function(e) {
                 e.preventDefault();
+
+                $('.form-control, .form-select').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+
+                // Simpan error
+                let errors = [];
+
+                const fields = [{
+                        id: 'name',
+                        label: 'Name'
+                    },
+                    {
+                        id: 'email',
+                        label: 'Email'
+                    },
+                    {
+                        id: 'phone_no',
+                        label: 'Phone Number'
+                    },
+                    {
+                        id: 'ic_no',
+                        label: 'IC Number'
+                    },
+                    {
+                        id: 'matric_no',
+                        label: 'Matric Number'
+                    },
+                    {
+                        id: 'course_id',
+                        label: 'Course'
+                    },
+                    {
+                        id: 'gender',
+                        label: 'Gender'
+                    },
+                    {
+                        id: 'address',
+                        label: 'Address'
+                    }
+                ];
+
+                fields.forEach(field => {
+                    const input = $('#' + field.id);
+                    const value = input.val()?.trim();
+
+                    if (!value) {
+                        input.addClass('is-invalid');
+                        input.after(`<div class="invalid-feedback">${field.label} is required.</div>`);
+                        errors.push(`${field.label} is required.`);
+                    }
+                });
+
+                const email = $('#email').val()?.trim();
+                if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+                    $('#email').addClass('is-invalid');
+                    $('#email').after('<div class="invalid-feedback">Invalid email format.</div>');
+                    errors.push('Invalid email format.');
+                }
+
+                if (errors.length > 0) {
+                    return;
+                }
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -127,6 +189,68 @@
 
             $(document).on('click', '#submitEditStudentBtn', function(e) {
                 e.preventDefault();
+
+                $('.form-control, .form-select').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+
+                // Simpan error
+                let errors = [];
+
+                const fields = [{
+                        id: 'edit_name',
+                        label: 'Name'
+                    },
+                    {
+                        id: 'edit_email',
+                        label: 'Email'
+                    },
+                    {
+                        id: 'edit_phone_no',
+                        label: 'Phone Number'
+                    },
+                    {
+                        id: 'edit_ic_no',
+                        label: 'IC Number'
+                    },
+                    {
+                        id: 'edit_matric_no',
+                        label: 'Matric Number'
+                    },
+                    {
+                        id: 'edit_course_id',
+                        label: 'Course'
+                    },
+                    {
+                        id: 'edit_gender',
+                        label: 'Gender'
+                    },
+                    {
+                        id: 'edit_address',
+                        label: 'Address'
+                    }
+                ];
+
+                fields.forEach(field => {
+                    const input = $('#' + field.id);
+                    const value = input.val()?.trim();
+
+                    if (!value) {
+                        input.addClass('is-invalid');
+                        input.after(`<div class="invalid-feedback">${field.label} is required.</div>`);
+                        errors.push(`${field.label} is required.`);
+                    }
+                });
+
+                const email = $('#email').val()?.trim();
+                if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+                    $('#email').addClass('is-invalid');
+                    $('#email').after('<div class="invalid-feedback">Invalid email format.</div>');
+                    errors.push('Invalid email format.');
+                }
+
+                if (errors.length > 0) {
+                    return;
+                }
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -166,8 +290,8 @@
                         $('#edit_ic_no').val(response.ic_no);
                         $('#edit_phone_no').val(response.phone_no);
                         $('#edit_matric_no').val(response.matric_no);
-                        $('#edit_course_id').val(response.course_id);
-                        $('#edit_gender').val(response.gender);
+                        $('#edit_course_id').val(response.course_id).trigger('change');
+                        $('#edit_gender').val(response.gender).trigger('change');
                         $('#edit_address').val(response.address);
 
                         let updateUrl = `/students/${response.id}`;
@@ -270,37 +394,37 @@
                             <div class="col mb-3">
                                 <label for="name" class="form-label">Name</label>
                                 <input type="text" id="name" name="name" class="form-control"
-                                    placeholder="Enter Name" />
+                                    placeholder="Enter Name" required />
                             </div>
                         </div>
                         <div class="row g-2">
                             <div class="col mb-0">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="text" id="email" name="email" class="form-control"
-                                    placeholder="xxxx@xxx.xx" />
+                                    placeholder="xxxx@xxx.xx" required />
                             </div>
                             <div class="col mb-0">
                                 <label for="phone_no" class="form-label">Phone No</label>
                                 <input type="text" id="phone_no" name="phone_no" class="form-control"
-                                    placeholder="012-xxxxxxxx" />
+                                    placeholder="012-xxxxxxxx" required />
                             </div>
                         </div>
                         <div class="row g-2">
                             <div class="col mb-0">
                                 <label for="ic_no" class="form-label">IC No</label>
                                 <input type="text" id="ic_no" name="ic_no" class="form-control"
-                                    placeholder="02xxxxxxxxxx" />
+                                    placeholder="02xxxxxxxxxx" required />
                             </div>
                             <div class="col mb-3">
                                 <label for="matric_no" class="form-label">Matric no</label>
                                 <input type="text" id="matric_no" name="matric_no" class="form-control"
-                                    placeholder="S1XXXXX" />
+                                    placeholder="S1XXXXX" required />
                             </div>
                         </div>
                         <div class="row g-2">
                             <div class="col mb-0">
                                 <label for="course_id" class="form-label">Course</label>
-                                <select id="course_id" name="course_id" class="form-select">
+                                <select id="course_id" name="course_id" class="form-select" required>
                                     <option value="" disabled>Select Course</option>
                                     @foreach ($course as $item)
                                         <option value="{{ $item->id }}">
@@ -311,7 +435,7 @@
                             </div>
                             <div class="col mb-0">
                                 <label for="gender" class="form-label">Gender</label>
-                                <select name="gender" id="gender" class="form-select">
+                                <select name="gender" id="gender" class="form-select" required>
                                     <option value="" disabled>Select Gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -322,7 +446,7 @@
                             <div class="col mb-3">
                                 <label for="address" class="form-label">Address</label>
                                 <textarea id="address" name="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4"
-                                    cols="50"></textarea>
+                                    cols="50" required></textarea>
                             </div>
                         </div>
                     </div>
@@ -330,7 +454,8 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Close
                         </button>
-                        <button type="submit" id="submitAddStudentBtn" class="btn btn-primary"><i class="bx bx-plus"></i>Student</button>
+                        <button type="submit" id="submitAddStudentBtn" class="btn btn-primary"><i
+                                class="bx bx-plus"></i>Student</button>
                     </div>
                 </div>
             </form>

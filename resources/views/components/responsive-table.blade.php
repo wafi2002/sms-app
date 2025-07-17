@@ -1,6 +1,7 @@
 <!-- Define Props -->
 @props([
     'columns' => [],
+    'columnAlignments' => [],
     'rows' => [],
     'hasAction' => false,
     'actions' => [],
@@ -12,6 +13,7 @@
     'showExportButton' => false,
     'showModal' => false,
     'modalTarget' => '',
+    'paginator' => null,
 ])
 
 <!-- Responsive Table -->
@@ -50,20 +52,22 @@
             <thead>
                 <tr class="text-nowrap">
                     <th>#</th>
-                    @foreach ($columns as $column)
-                        <th>{{ $column }}</th>
+                    @foreach ($columns as $key => $column)
+                        <th class="{{ ($columnAlignments[$key] ?? '') === 'center' ? 'text-center' : '' }}">
+                            {{ $column }}</th>
                     @endforeach
                     @if (!empty($hasAction) && $hasAction)
-                        <th>Action</th>
+                        <th class="text-center">Action</th>
                     @endif
                 </tr>
             </thead>
             <tbody>
                 @foreach ($rows as $index => $row)
+                    {{-- <pre>{{ print_r($row, true) }}</pre> --}}
                     <tr>
                         <th scope="row">{{ $index + 1 }}</th>
                         @foreach ($columns as $key => $column)
-                            <td>
+                            <td class="{{ $columnAlignments[$key] === 'center' ? 'text-center' : '' }}">
                                 @if ($key === 'mark')
                                     <div class="input-group input-group-sm">
                                         <input type="number" step="0.01" min="0" max="100"
@@ -82,7 +86,7 @@
                             </td>
                         @endforeach
                         @if (!empty($hasAction) && $hasAction)
-                            <td>
+                            <td class="text-center">
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                         data-bs-toggle="dropdown">
@@ -90,10 +94,9 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         @foreach ($actions as $action)
-                                            <a class="dropdown-item"
+                                            <a class="dropdown-item {{ $action['jsTrigger'] }}"
                                                 href="{{ route($action['route'], [$action['paramKey'] ?? 'id' => $row['id']]) }}"
-                                                @if (!empty($action['modal']) && $action['modal'] === true) data-bs-toggle="modal"
-                                    data-bs-target="{{ $action['target'] ?? '' }}" @endif
+                                                @if (!empty($action['modal']) && $action['modal'] === true) data-bs-toggle="modal" data-bs-target="{{ $action['target'] ?? '' }}" @endif
                                                 data-id="{{ $row['id'] }}"
                                                 data-url="{{ route($action['route'], [$action['paramKey'] ?? 'id' => $row['id']]) }}">
                                                 <i class="{{ $action['icon'] ?? 'bx bx-cog' }} me-1"></i>
@@ -108,6 +111,11 @@
                 @endforeach
             </tbody>
         </table>
+        @if (isset($paginator))
+            <div class="mt-3 mx-3">
+                {{ $paginator->links() }}
+            </div>
+        @endif
     </div>
 </div>
 <!--/ Responsive Table -->

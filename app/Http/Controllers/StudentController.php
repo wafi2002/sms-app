@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Validation\ValidationException;
 
 class StudentController extends Controller
 {
@@ -34,18 +35,12 @@ class StudentController extends Controller
                 'course_id' => 'required|exists:courses,id',
             ]);
 
-            $student = Student::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'ic_no' => $validated['ic_no'],
-                'phone_no' => $validated['phone_no'],
-                'address' => $validated['address'],
-                'gender' => $validated['gender'],
-                'matric_no' => $validated['matric_no'],
-                'course_id' => $validated['course_id'],
-            ]);
+            Student::create($validated);
 
             return redirect()->back()->with('success', 'New Student Successfully Added.');
+        } catch (ValidationException $e) {
+            // Laravel will auto redirect back with input & error messages
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             Log::error('Error adding student: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to add student.');
@@ -118,13 +113,9 @@ class StudentController extends Controller
     {
         try {
             $student = Student::findOrFail($studentId);
-            $user = $student->user;
 
             $student->delete();
 
-            if ($user) {
-                $user->delete();
-            }
             return response()->json(['success' => 'Student deleted successfully.']);
         } catch (Exception $e) {
             Log::error('Error deleting student: ' . $e->getMessage());

@@ -33,8 +33,8 @@
         </div>
     </div>
 
-    <x-responsive-table :columns="$columns" :rows="$rows" :showAddButton="true"
-        :showModal="true" title="Manage Student Marks" buttonLabel="Add" addButtonIcon="bx bx-file"
+    <x-responsive-table :columns="$columns" :rows="$rows" :showAddButton="true" :columnAlignments="$columnAlignments"
+        :showModal="true" title="All Student Marks" buttonLabel="Add" addButtonIcon="bx bx-book-open" :paginator="$exam"
         modalTarget="#addStudentMarksModal" />
 </div>
 
@@ -44,7 +44,17 @@
         $('.course-filter').select2();
         $('.subject-filter').select2();
 
-        $('.form-select').on('change', function() {
+        $('.course-filter').on('change', function() {
+            const key = $(this).data('filter-key');
+            const value = $(this).val();
+
+            Livewire.dispatch('filter-changed', {
+                key: key,
+                value: value
+            });
+        });
+
+        $('.subject-filter').on('change', function() {
             const key = $(this).data('filter-key');
             const value = $(this).val();
 

@@ -6,18 +6,35 @@ use Livewire\Component;
 use App\Models\Student;
 use App\Models\Course;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
-class DynamicTable extends Component
+class StudentTable extends Component
 {
-
+    use WithPagination {
+        WithPagination::resetPage as defaultResetPage;
+    }
     public $columns = [];
     public $rows = [];
     public $hasAction = true;
     public $actions = [];
     public $course_id = '';
+
+    public $columnAlignments = [];
     public $filterOptions = [];
     protected $listeners = ['filter-changed' => 'onFilterChanged'];
     public $filters = [];
+
+    protected $paginationTheme = 'bootstrap';
+
+    public function getPageName()
+    {
+        return 'students_page'; // ini akan jadi query string: ?students_page=2
+    }
+
+    public function resetPage($pageName = 'page')
+    {
+        $this->defaultResetPage('students_page');
+    }
 
     #[On('filter-changed')]
     public function onFilterChanged($key, $value)
@@ -35,6 +52,14 @@ class DynamicTable extends Component
             'phone_no' => 'Phone No',
             'matric_no' => 'Matric No',
             'email' => 'Email',
+        ];
+
+        $this->columnAlignments = [
+            'name' => 'left',
+            'ic_no' => 'left',
+            'phone_no' => 'left',
+            'matric_no' => 'left',
+            'email' => 'left',
         ];
 
         $this->actions = [
@@ -72,7 +97,7 @@ class DynamicTable extends Component
             ->when(isset($this->filters['Course']) && $this->filters['Course'], function ($query) {
                 $query->where('course_id', $this->filters['Course']);
             })
-            ->get();
+            ->paginate(5, ['*'], 'students_page')->withQueryString();
 
         $this->rows = $students->map(function ($student) {
             return [
@@ -85,6 +110,6 @@ class DynamicTable extends Component
             ];
         })->toArray();
 
-        return view('livewire.dynamic-table');
+        return view('livewire.student-table', ['students' => $students,]);
     }
 }

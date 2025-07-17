@@ -1,7 +1,11 @@
 @section('title', __('Exam Mark'))
 
 <x-layouts.app>
-    @livewire('exam-mark-table')
+    @push('styles')
+        @vite(['resources/css/course.css'])
+    @endpush
+
+    @livewire('exam-table')
 
     @push('scripts')
         <script>
@@ -21,9 +25,15 @@
                 let url = btn.data('url');
 
                 let input = btn.closest('.input-group').find('.update-mark');
-                let mark = input.val();
+                let mark = parseInt(input.val());
 
-                console.log(id, url, mark);
+                if (mark > 100) {
+                    mark = 100;
+                    input.val(100);
+                } else if (mark < 0) {
+                    mark = 0;
+                    input.val(0);
+                }
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -86,91 +96,165 @@
                     attachMarkListeners();
                 });
             });
+
+            document.getElementById('student_id').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const courseName = selectedOption.getAttribute('data-course-name') || '-';
+                const courseCode = selectedOption.getAttribute('data-course-code') || '-';
+                const stringCourse = `${courseCode} - ${courseName}`;
+                document.getElementById('course').value = stringCourse;
+            });
+
+            document.getElementById('marks').addEventListener('input', function() {
+                if (this.value > 100) {
+                    this.value = 100;
+                } else if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+
+            document.getElementById('marks').addEventListener('input', function() {
+                const marks = parseFloat(this.value);
+                let grade = '';
+
+                if (!isNaN(marks)) {
+                    if (marks >= 85) {
+                        grade = 'A';
+                    } else if (marks >= 80) {
+                        grade = 'A-';
+                    } else if (marks >= 75) {
+                        grade = 'B+';
+                    } else if (marks >= 70) {
+                        grade = 'B';
+                    } else if (marks >= 65) {
+                        grade = 'B-';
+                    } else if (marks >= 60) {
+                        grade = 'C+';
+                    } else if (marks >= 55) {
+                        grade = 'C';
+                    } else if (marks >= 50) {
+                        grade = 'D';
+                    } else {
+                        grade = 'F';
+                    }
+                }
+
+                document.getElementById('grade').value = grade;
+            });
         </script>
     @endpush
-</x-layouts.app>
 
-<!-- Add Student Modal -->
-<div class="col-lg-4 col-md-6">
-    <div class="modal fade" id="addStudentMarksModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <form action="{{ route('students.store') }}" method="post">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalStudentTitle">Add Student Marks</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Add Student Mark Modal -->
+    <div class="col-lg-4 col-md-6">
+        <div class="modal fade" id="addStudentMarksModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <form action="{{ route('exams.store') }}" method="post">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalStudentTitle">Add Student Marks</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="student_id" class="form-label">Student</label>
+                                    <select id="student_id" name="student_id" class="form-select ">
+                                        <option value="">Select Student</option>
+                                        @foreach ($student as $std)
+                                            <option value="{{ $std->id }}"
+                                                data-course-name="{{ $std->course->course_name ?? '-' }}"
+                                                data-course-code="{{ $std->course->course_code ?? '-' }}">
+                                                {{ $std->matric_no }} -
+                                                {{ $std->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="course" class="form-label">Course</label>
+                                    <input type="text" id="course" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6 mb-3">
+                                    <label for="subject_id" class="form-label">Subject</label>
+                                    <select id="subject_id" name="subject_id" class="form-select ">
+                                        <option value="">Select Subject</option>
+                                        @foreach ($subject as $sbj)
+                                            <option value="{{ $sbj->id }}">{{ $sbj->subject_code }} -
+                                                {{ $sbj->subject_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label for="exam_id" class="form-label">Exam</label>
+                                    <select id="exam_id" name="exam_id" class="form-select ">
+                                        <option value="">Select Exam</option>
+                                        @foreach ($exam as $exm)
+                                            <option value="{{ $exm->id }}">{{ $exm->exam_code }} -
+                                                {{ $exm->exam_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-12 mb-3">
+                                    <label for="lecturer_id" class="form-label">Requester</label>
+                                    <select id="lecturer_id" name="lecturer_id" class="form-select">
+                                        <option value="">Select Lecturer</option>
+                                        @foreach ($lecturer as $ltr)
+                                            <option value="{{ $ltr->id }}">{{ $ltr->lecturer_no }} -
+                                                {{ $ltr->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6 mb-3">
+                                    <label for="marks" class="form-label">Marks</label>
+                                    <input type="number" id="marks" name="marks" min="0" max="100"
+                                        class="form-control">
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <label for="grade" class="form-label">Grade</label>
+                                    <input type="text" id="grade" name="grade" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" id="submitAddStudentBtn" class="btn btn-primary"><i
+                                    class="bx bx-plus"></i>Mark</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" id="name" name="name" class="form-control"
-                                    placeholder="Enter Name" />
-                            </div>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col mb-0">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="text" id="email" name="email" class="form-control"
-                                    placeholder="xxxx@xxx.xx" />
-                            </div>
-                            <div class="col mb-0">
-                                <label for="phone_no" class="form-label">Phone No</label>
-                                <input type="text" id="phone_no" name="phone_no" class="form-control"
-                                    placeholder="012-xxxxxxxx" />
-                            </div>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col mb-0">
-                                <label for="ic_no" class="form-label">IC No</label>
-                                <input type="text" id="ic_no" name="ic_no" class="form-control"
-                                    placeholder="02xxxxxxxxxx" />
-                            </div>
-                            <div class="col mb-3">
-                                <label for="matric_no" class="form-label">Matric no</label>
-                                <input type="text" id="matric_no" name="matric_no" class="form-control"
-                                    placeholder="S1XXXXX" />
-                            </div>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col mb-0">
-                                <label for="course_id" class="form-label">Course</label>
-                                <select id="course_id" name="course_id" class="form-select">
-                                    <option value="" disabled>Select Course</option>
-                                    @foreach ($course as $item)
-                                        <option value="{{ $item->id }}">
-                                            {{ $item->course_code }} - {{ $item->course_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col mb-0">
-                                <label for="gender" class="form-label">Gender</label>
-                                <select name="gender" id="gender" class="form-select">
-                                    <option value="" disabled>Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row ">
-                            <div class="col mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <textarea id="address" name="address" class="form-control" placeholder="Road 2/9, Alaska" rows="4"
-                                    cols="50"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            Close
-                        </button>
-                        <button type="submit" id="submitAddStudentBtn" class="btn btn-primary"><i
-                                class="bx bx-plus"></i>Student</button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+
+</x-layouts.app>
+
+@if (session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        Swal.fire({
+            title: 'Error!',
+            text: '{{ session('error') }}',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    </script>
+@endif

@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ExamController;
+
 
 Route::get('/', function () {
     return redirect('/login');
@@ -21,22 +25,28 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth'])->name('students.')->group(function () {
-    Route::get('students', [App\Http\Controllers\StudentController::class, 'index'])->name('index');
-    Route::post('students', [App\Http\Controllers\StudentController::class, 'addStudent'])->name('store');
-    Route::get('students/{student}', [App\Http\Controllers\StudentController::class, 'viewStudent'])->name('view');
-    Route::put('students/{student}', [App\Http\Controllers\StudentController::class, 'updateStudent'])->name('update');
-    Route::delete('students/{student}', [App\Http\Controllers\StudentController::class, 'deleteStudent'])->name('delete');
+    Route::get('students', [StudentController::class, 'index'])->name('index');
+    Route::post('students', [StudentController::class, 'addStudent'])->name('store');
+    Route::get('students/{student}', [StudentController::class, 'viewStudent'])->name('view');
+    Route::put('students/{student}', [StudentController::class, 'updateStudent'])->name('update');
+    Route::delete('students/{student}', [StudentController::class, 'deleteStudent'])->name('delete');
 });
 
 Route::middleware(['auth'])->name('course.')->group(function () {
-    Route::view('course/all-courses', 'modules.courseModule.index')->name('index');
+    Route::get('course', [CourseController::class, 'index'])->name('index');
+    Route::post('course', [CourseController::class, 'addCourse'])->name('store');
+    Route::get('course/{subject}', [CourseController::class, 'viewCourse'])->name('view');
+    Route::put('course/{subject}', [CourseController::class, 'updateCourse'])->name('update');
+    Route::delete('course/{subject}', [CourseController::class, 'deleteCourse'])->name('delete');
 });
 
 Route::middleware(['auth'])->name('exams.')->group(function () {
-    Route::view('exams/schedule', 'modules.examModule.schedule')->name('schedule');
-    Route::get('exams/mark', [App\Http\Controllers\ExamController::class, 'marks'])->name('mark');
-    Route::put('exams/{student}', [App\Http\Controllers\ExamController::class, 'updateMark'])->name('update');
-    Route::delete('exams/{student}', [App\Http\Controllers\ExamController::class, 'deleteMark'])->name('delete');
+    Route::get('exams/schedule', [ExamController::class, 'schedule'])->name('schedule');
+    Route::post('exams/store', [ExamController::class, 'addSchedule'])->name('scheduleStore');
+    Route::get('exams/mark', [ExamController::class, 'marks'])->name('mark');
+    Route::post('exams/mark', [ExamController::class, 'storeMark'])->name('store');
+    Route::put('exams/{student}', [ExamController::class, 'updateMark'])->name('update');
+    Route::delete('exams/{student}', [ExamController::class, 'deleteMark'])->name('delete');
 });
 
 Route::middleware(['auth'])->name('reports.')->group(function () {

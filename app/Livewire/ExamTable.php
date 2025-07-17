@@ -9,9 +9,14 @@ use App\Models\Subject;
 use App\Models\Student;
 use App\Models\Result;
 use Livewire\Attributes\On;
+use Livewire\WithPagination;
 
-class ExamMarkTable extends Component
+class ExamTable extends Component
 {
+    use WithPagination {
+        WithPagination::resetPage as defaultResetPage;
+    }
+
     public $columns = [];
     public $rows = [];
     public $hasAction = true;
@@ -19,8 +24,22 @@ class ExamMarkTable extends Component
     public $course_id = '';
     public $courseOptions = [];
     public $subjectOptions = [];
+
+    public $columnAlignments = [];
     protected $listeners = ['filter-changed' => 'onFilterChanged', 'refreshExamMarkTable' => '$refresh' ];
     public $filters = [];
+
+    protected $paginationTheme = 'bootstrap';
+
+    public function getPageName()
+    {
+        return 'exam_page'; // ini akan jadi query string: ?students_page=2
+    }
+
+    public function resetPage($pageName = 'page')
+    {
+        $this->defaultResetPage('exam_page');
+    }
 
 
     #[On('filter-changed')]
@@ -44,6 +63,15 @@ class ExamMarkTable extends Component
             'mark' => 'Marks',
             'grade' => 'Grade'
         ];
+
+        $this->columnAlignments = [
+            'matric_no' => 'left',
+            'name' => 'left',
+            'course' => 'center',
+            'subject' => 'center',
+            'mark' => 'center',
+            'grade' => 'center',
+        ];
     }
     public function render()
     {
@@ -57,7 +85,7 @@ class ExamMarkTable extends Component
             ->when(isset($this->filters['Subjects']) && $this->filters['Subjects'], function ($query) {
                 $query->where('subject_id', $this->filters['Subjects']);
             })
-            ->get();
+            ->paginate(5, ['*'], 'exam_page')->withQueryString();
 
         $this->rows = $results->map(function ($result) {
             return [
@@ -71,6 +99,6 @@ class ExamMarkTable extends Component
             ];
         })->toArray();
 
-        return view('livewire.exam-mark-table');
+        return view('livewire.exam-table' ,['exam' => $results,]);
     }
 }
